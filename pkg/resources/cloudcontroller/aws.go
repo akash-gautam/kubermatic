@@ -117,6 +117,22 @@ func awsDeploymentReconciler(data *resources.TemplateData) reconciling.NamedDepl
 				},
 			}
 
+			if data.Cluster().Spec.Cloud.AWS.AssumeRoleARN != "" {
+				assumeRoleEnvVar := corev1.EnvVar{
+					Name:  "AWS_ASSUME_ROLE_ARN",
+					Value: data.Cluster().Spec.Cloud.AWS.AssumeRoleARN,
+				}
+				dep.Spec.Template.Spec.Containers[0].Env = append(dep.Spec.Template.Spec.Containers[0].Env, assumeRoleEnvVar)
+			}
+
+			if data.Cluster().Spec.Cloud.AWS.AssumeRoleExternalID != "" {
+				assumeRoleExternalIDEnvVar := corev1.EnvVar{
+					Name:  "AWS_ASSUME_ROLE_EXTERNAL_ID",
+					Value: data.Cluster().Spec.Cloud.AWS.AssumeRoleExternalID,
+				}
+				dep.Spec.Template.Spec.Containers[0].Env = append(dep.Spec.Template.Spec.Containers[0].Env, assumeRoleExternalIDEnvVar)
+			}
+
 			defResourceRequirements := map[string]*corev1.ResourceRequirements{
 				ccmContainerName: awsResourceRequirements.DeepCopy(),
 			}
